@@ -1,9 +1,11 @@
 
 
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, body_might_complete_normally_nullable, unused_local_variable, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, body_might_complete_normally_nullable, unused_local_variable, use_build_context_synchronously, invalid_return_type_for_catch_error
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/Screens/login_screen.dart';
+import 'package:food_delivery_app/Services/google_sigin.dart';
 import 'package:food_delivery_app/Widgets/create_account_icons.dart';
 import 'package:food_delivery_app/Widgets/custom_has_account.dart';
 import 'package:food_delivery_app/Widgets/custom_text_field.dart';
@@ -12,6 +14,7 @@ import 'package:food_delivery_app/Widgets/snack_bar_error.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Constants/app_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RigisterScreen extends StatefulWidget {
   RigisterScreen({super.key});
@@ -34,6 +37,7 @@ class _RigisterScreenState extends State<RigisterScreen> {
  
     @override
     Widget build(BuildContext context) {
+      final users = FirebaseFirestore.instance.collection('users');
     return Scaffold(
       body: SafeArea(
         child: ModalProgressHUD(
@@ -74,11 +78,32 @@ class _RigisterScreenState extends State<RigisterScreen> {
                           ), 
                         ],
                       ),
-                    ), 
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: CreateAccountsIcon(),
                     ),
+                    SizedBox(height: 20,), 
+                    Row( 
+                      mainAxisAlignment: MainAxisAlignment.center, 
+                      children: [
+                        CreateAccountsIcon(
+                          imagePath: "assets/images/facebook.png", 
+                          onTap: (){
+
+                          },
+                        ),
+                        CreateAccountsIcon(
+                          imagePath: "assets/images/google.png", 
+                          onTap: (){
+                            GoogleSiginServices().signWithGoogle();
+                          }
+                        ), 
+                        CreateAccountsIcon(
+                          imagePath: "assets/images/twiter.png", 
+                          onTap: (){
+
+                          },
+                        ),
+                      ],
+                    ),
+                 
                   ],
                 ),
                 Positioned(
@@ -192,12 +217,23 @@ class _RigisterScreenState extends State<RigisterScreen> {
                             width: double.infinity,
                             onTap: () async{
                               if(formKey.currentState!.validate()){
+                                CollectionReference user = FirebaseFirestore.instance.collection('users');
                                 isLoading = true;
                                 try{ 
                                   UserCredential credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                                     email: emial!,
                                     password: password!,
                                   );
+
+                                  user.doc(credential.user!.uid)
+                                      .set({
+                                        'username': userName, // John Doe
+                                        'emial': emial, // Stokes and Sons
+                                         // 42
+                                      })
+                                      .then((value) => print("User Added"))
+                                      .catchError((error) => print("Failed to add user: $error"));
+
                                   showSnakBarError(context, "Created Sucssfully");
                                   Navigator.pop(context); 
                                 }on FirebaseAuthException catch(err) {

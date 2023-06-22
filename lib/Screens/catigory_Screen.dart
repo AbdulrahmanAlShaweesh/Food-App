@@ -8,7 +8,7 @@ class CatigoryScreen extends StatelessWidget {
   static String id = "catigory screen";
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return Scaffold( 
        appBar: AppBar(  
           title: Text("Catigory"),

@@ -6,6 +6,7 @@ import 'package:food_delivery_app/Constants/app_colors.dart';
 import 'package:food_delivery_app/Screens/home_screen.dart';
 import 'package:food_delivery_app/Screens/register_screen.dart';
 import 'package:food_delivery_app/Screens/reset_password_screen.dart';
+import 'package:food_delivery_app/Services/google_sigin.dart';
 import 'package:food_delivery_app/Widgets/create_account_icons.dart';
 import 'package:food_delivery_app/Widgets/custom_has_account.dart';
 import 'package:food_delivery_app/Widgets/custom_text_field.dart';
@@ -77,10 +78,31 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ), 
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: CreateAccountsIcon(),
-                    )
+                    SizedBox(height: 20,), 
+                    Row(  
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CreateAccountsIcon(
+                          imagePath: "assets/images/facebook.png", 
+                          onTap: (){
+                           
+                          },
+                        ),
+                        CreateAccountsIcon(
+                          imagePath: "assets/images/google.png", 
+                          onTap: (){
+                               GoogleSiginServices().signWithGoogle();
+                          },
+                        ), 
+                        CreateAccountsIcon(
+                          imagePath: "assets/images/twiter.png", 
+                          onTap: (){
+
+                          },
+                        ),
+                      ],
+                    ),
+                 
                   ],
                 ),
                 Positioned(

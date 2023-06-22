@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, void_checks
+
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:food_delivery_app/Screens/home_screen.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
@@ -13,17 +16,36 @@ class EmailVerificationScreen extends StatefulWidget {
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   bool isEmailVerified = false;
+  bool isCanResed = false; 
+
   Timer? timer;
+  
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    FirebaseAuth.instance.currentUser?.sendEmailVerification();
-    timer =
-        Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerified());
+    isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    // timer =
+    //     Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerified());
+    if(!isEmailVerified) {
+      sendVerifyedEmial();
+      timer = Timer.periodic(Duration(seconds: 3), (_) => checkEmailVerified());
+    }
   }
 
-  checkEmailVerified() async {
+  Future sendVerifyedEmial() async{
+    final user = FirebaseAuth.instance.currentUser;
+    await user!.sendEmailVerification();
+
+    setState(() {
+        isCanResed = false; 
+    });
+    await Future.delayed(Duration(seconds: 5)); 
+    setState(() {
+        isCanResed = true;
+    });
+  }
+
+  Future checkEmailVerified() async {
     await FirebaseAuth.instance.currentUser?.reload();
 
     setState(() {
@@ -31,7 +53,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     });
 
     if (isEmailVerified) {
-      // TODO: implement your code after email verification
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Email Successfully Verified")));
 
@@ -41,7 +62,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     timer?.cancel();
     super.dispose();
   }
@@ -56,6 +76,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              
               const SizedBox(height: 35),
               const SizedBox(height: 30),
               const Center(
@@ -69,7 +90,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Center(
                   child: Text(
-                    'We have sent you a Email on  ${FirebaseAuth.instance.currentUser!.email}',
+                    'We have sent you a Email on  abdulrahman@123434gmail.com',
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -94,6 +115,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: ElevatedButton(
                   child: const Text('Resend'),
                   onPressed: () {
+                    
                     try {
                       FirebaseAuth.instance.currentUser
                           ?.sendEmailVerification();

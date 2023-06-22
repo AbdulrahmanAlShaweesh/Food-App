@@ -4,37 +4,41 @@
 import 'package:flutter/material.dart';
 
 class CreateAccountsIcon extends StatelessWidget {
-  CreateAccountsIcon({super.key});
-  List<String> iconAssets = [
-      "assets/images/facebook.png", 
-      "assets/images/github.png", 
-      "assets/images/google.png", 
-      "assets/images/twiter.png" 
-  ]; 
-  Widget icon(String image) {
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.all(9),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey, width: 2), 
-          shape: BoxShape.circle
-        ),
-        child: Image.asset(image, height: 30, width: 30,),
-    ); 
-  }
+  CreateAccountsIcon({
+    super.key, 
+    required this.onTap, 
+    required this.imagePath
+    });
+ 
+  Function()? onTap; 
+  String imagePath; 
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(iconAssets.length, (index) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: icon(iconAssets[index]),
-            );
-          }),
+      child: GestureDetector( 
+        onTap: onTap,
+        child: Container(
+        margin: EdgeInsets.only(left: 10),
+        height: 65, 
+        width: 80,
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3), 
+                offset: Offset(0, 6,), 
+                blurRadius: 10
+              )
+            ],
+            borderRadius: BorderRadius.circular(15),
+            color: Colors.white,
+            border: Border.all(color: Colors.grey, width: 2), 
+           ),
+          child: Image.asset(imagePath, height: 60, width: 60,),
+        ),
       ),
     ); 
   }
